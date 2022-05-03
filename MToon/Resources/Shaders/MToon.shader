@@ -4,9 +4,13 @@ Shader "VRM/MToon"
     {
         _Cutoff ("Alpha Cutoff", Range(0, 1)) = 0.5
         _Color ("Lit Color + Alpha", Color) = (1,1,1,1)
+        _Color_Mirror ("Lit Color + Alpha mirror", Color)=(1,1,1,1)
         _ShadeColor ("Shade Color", Color) = (0.97, 0.81, 0.86, 1)
+        _ShadeColor_Mirror ("Shade Color mirror", Color)=(0.97, 0.81, 0.86, 1)
         [NoScaleOffset] _MainTex ("Lit Texture + Alpha", 2D) = "white" {}
         [NoScaleOffset] _ShadeTexture ("Shade Texture", 2D) = "white" {}
+        [NoScaleOffset] _MainTex_Mirror("Lit Texture + Alpha mirror", 2D)="white" {}
+        [NoScaleOffset] _ShadeTexture_Mirror("Shade Texture mirror", 2D)="white" {}
         _BumpScale ("Normal Scale", Float) = 1.0
         [Normal] _BumpMap ("Normal Texture", 2D) = "bump" {}
         _ReceiveShadowRate ("Receive Shadow", Range(0, 1)) = 1
@@ -25,6 +29,8 @@ Shader "VRM/MToon"
         [NoScaleOffset] _SphereAdd ("Sphere Texture(Add)", 2D) = "black" {}
         [HDR] _EmissionColor ("Color", Color) = (0,0,0)
         [NoScaleOffset] _EmissionMap ("Emission", 2D) = "white" {}
+        [HDR] _EmissionColor_Mirror("Color mirror", Color)=(0,0,0)
+        [NoScaleOffset] _EmissionMap_Mirror("Emission mirror", 2D)="white" {}
         [NoScaleOffset] _OutlineWidthTexture ("Outline Width Tex", 2D) = "white" {}
         _OutlineWidth ("Outline Width", Range(0.01, 1)) = 0.5
         _OutlineScaledMaxDistance ("Outline Scaled Max Distance", Range(1, 10)) = 1

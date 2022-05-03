@@ -17,9 +17,13 @@ namespace MToon
         public const string PropOutlineCullMode = "_OutlineCullMode";
         public const string PropCutoff = "_Cutoff";
         public const string PropColor = "_Color";
+        public const string PropColor_Mirror = "_Color_Mirror";
         public const string PropShadeColor = "_ShadeColor";
+        public const string PropShadeColor_Mirror = "_ShadeColor_Mirror";
         public const string PropMainTex = "_MainTex";
+        public const string PropMainTex_Mirror = "_MainTex_Mirror";
         public const string PropShadeTexture = "_ShadeTexture";
+        public const string PropShadeTexture_Mirror = "_ShadeTexture_Mirror";
         public const string PropBumpScale = "_BumpScale";
         public const string PropBumpMap = "_BumpMap";
         public const string PropReceiveShadowRate = "_ReceiveShadowRate";
@@ -37,7 +41,9 @@ namespace MToon
         public const string PropRimLift = "_RimLift";
         public const string PropSphereAdd = "_SphereAdd";
         public const string PropEmissionColor = "_EmissionColor";
+        public const string PropEmissionColor_Mirror = "_EmissionColor_Mirror";
         public const string PropEmissionMap = "_EmissionMap";
+        public const string PropEmissionMap_Mirror = "_EmissionMap_Mirror";
         public const string PropOutlineWidthTexture = "_OutlineWidthTexture";
         public const string PropOutlineWidth = "_OutlineWidth";
         public const string PropOutlineScaledMaxDistance = "_OutlineScaledMaxDistance";

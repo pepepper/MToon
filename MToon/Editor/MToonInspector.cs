@@ -19,6 +19,7 @@ namespace MToon
         private MaterialProperty _bumpMap;
         private MaterialProperty _bumpScale;
         private MaterialProperty _color;
+        private MaterialProperty _color_Mirror;
         private MaterialProperty _cullMode;
 //        private MaterialProperty _outlineCullMode;
         private MaterialProperty _cutoff;
@@ -26,9 +27,12 @@ namespace MToon
         private MaterialProperty _debugMode;
         private MaterialProperty _emissionColor;
         private MaterialProperty _emissionMap;
+        private MaterialProperty _emissionColor_Mirror;
+        private MaterialProperty _emissionMap_Mirror;
         private MaterialProperty _lightColorAttenuation;
         private MaterialProperty _indirectLightIntensity;
         private MaterialProperty _mainTex;
+        private MaterialProperty _mainTex_Mirror;
         private MaterialProperty _outlineColor;
         private MaterialProperty _outlineColorMode;
         private MaterialProperty _outlineLightingMix;
@@ -41,8 +45,10 @@ namespace MToon
         private MaterialProperty _shadingGradeRate;
         private MaterialProperty _shadingGradeTexture;
         private MaterialProperty _shadeColor;
+        private MaterialProperty _shadeColor_Mirror;
         private MaterialProperty _shadeShift;
         private MaterialProperty _shadeTexture;
+        private MaterialProperty _shadeTexture_Mirror;
         private MaterialProperty _shadeToony;
         private MaterialProperty _sphereAdd;
         private MaterialProperty _rimColor;
@@ -66,9 +72,13 @@ namespace MToon
 //            _outlineCullMode = FindProperty(Utils.PropOutlineCullMode, properties);
             _cutoff = FindProperty(Utils.PropCutoff, properties);
             _color = FindProperty(Utils.PropColor, properties);
+            _color_Mirror = FindProperty(Utils.PropColor_Mirror, properties);
             _shadeColor = FindProperty(Utils.PropShadeColor, properties);
+            _shadeColor_Mirror = FindProperty(Utils.PropShadeColor_Mirror, properties);
             _mainTex = FindProperty(Utils.PropMainTex, properties);
+            _mainTex_Mirror = FindProperty(Utils.PropMainTex_Mirror, properties);
             _shadeTexture = FindProperty(Utils.PropShadeTexture, properties);
+            _shadeTexture_Mirror = FindProperty(Utils.PropShadeTexture_Mirror, properties);
             _bumpScale = FindProperty(Utils.PropBumpScale, properties);
             _bumpMap = FindProperty(Utils.PropBumpMap, properties);
             _receiveShadowRate = FindProperty(Utils.PropReceiveShadowRate, properties);
@@ -87,6 +97,8 @@ namespace MToon
             _sphereAdd = FindProperty(Utils.PropSphereAdd, properties);
             _emissionColor = FindProperty(Utils.PropEmissionColor, properties);
             _emissionMap = FindProperty(Utils.PropEmissionMap, properties);
+            _emissionColor_Mirror = FindProperty(Utils.PropEmissionColor_Mirror, properties);
+            _emissionMap_Mirror = FindProperty(Utils.PropEmissionMap_Mirror, properties);
             _outlineWidthTexture = FindProperty(Utils.PropOutlineWidthTexture, properties);
             _outlineWidth = FindProperty(Utils.PropOutlineWidth, properties);
             _outlineScaledMaxDistance = FindProperty(Utils.PropOutlineScaledMaxDistance, properties);
@@ -138,6 +150,14 @@ namespace MToon
 
                         materialEditor.TexturePropertySingleLine(new GUIContent("Shade Color", "Shade (RGB)"), _shadeTexture,
                             _shadeColor);
+                    }
+                    EditorGUILayout.LabelField("Texture in Mirror", EditorStyles.boldLabel);
+                    {
+                        materialEditor.TexturePropertySingleLine(new GUIContent("Lit Color, Alpha mirror", "Lit (RGB), Alpha (A)"),
+                        _mainTex_Mirror, _color_Mirror);
+
+                        materialEditor.TexturePropertySingleLine(new GUIContent("Shade Color mirror", "Shade (RGB)"), _shadeTexture_Mirror,
+                        _shadeColor_Mirror);
                     }
                     var bm = (RenderMode) _blendMode.floatValue;
                     if (bm == RenderMode.Cutout)
@@ -222,7 +242,8 @@ namespace MToon
                 {
                     TextureWithHdrColor(materialEditor, "Emission", "Emission (RGB)",
                         _emissionMap, _emissionColor);
-                    
+                    TextureWithHdrColor(materialEditor, "Emission mirror", "Emission (RGB)",
+                        _emissionMap_Mirror, _emissionColor_Mirror);
                     materialEditor.TexturePropertySingleLine(new GUIContent("MatCap", "MatCap Texture (RGB)"),
                         _sphereAdd);
                 }

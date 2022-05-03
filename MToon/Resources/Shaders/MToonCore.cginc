@@ -7,8 +7,12 @@
 half _Cutoff;
 fixed4 _Color;
 fixed4 _ShadeColor;
+fixed4 _Color_Mirror;
+fixed4 _ShadeColor_Mirror;
 sampler2D _MainTex; float4 _MainTex_ST;
 sampler2D _ShadeTexture;
+sampler2D _MainTex_Mirror;
+sampler2D _ShadeTexture_Mirror;
 half _BumpScale;
 sampler2D _BumpMap;
 sampler2D _ReceiveShadowTexture; 
@@ -27,6 +31,8 @@ half _RimLift;
 sampler2D _SphereAdd;
 half4 _EmissionColor;
 sampler2D _EmissionMap;
+half4 _EmissionColor_Mirror;
+sampler2D _EmissionMap_Mirror;
 sampler2D _OutlineWidthTexture;
 half _OutlineWidth;
 half _OutlineScaledMaxDistance;
@@ -83,7 +89,7 @@ inline v2f InitializeV2F(appdata_full v, float4 projectedVertex, float isOutline
 
 inline float4 CalculateOutlineVertexClipPosition(appdata_full v)
 {
-    float outlineTex = tex2Dlod(_OutlineWidthTexture, float4(TRANSFORM_TEX(v.texcoord, _MainTex), 0, 0)).r;
+    float outlineTex = tex2Dlod(_OutlineWidthTexture, float4(TRANSFORM_TEX(v.texcoord,(unity_CameraProjection[2][0]+unity_CameraProjection[2][1])?_MainTex_Mirror:_MainTex), 0, 0)).r;
     
  #if defined(MTOON_OUTLINE_WIDTH_WORLD)
     float3 worldNormalLength = length(mul((float3x3)transpose(unity_WorldToObject), v.normal));
@@ -107,6 +113,27 @@ inline float4 CalculateOutlineVertexClipPosition(appdata_full v)
 
 float4 frag_forward(v2f i) : SV_TARGET
 {
+    fixed4 __Color;
+    fixed4 __ShadeColor;
+    sampler2D __MainTex;
+    sampler2D __ShadeTexture;
+    half4 __EmissionColor;
+    sampler2D __EmissionMap;
+    if(unity_CameraProjection[2][0]+unity_CameraProjection[2][1]==0){
+        __Color=_Color;
+        __ShadeColor=_ShadeColor;
+        __MainTex=_MainTex;
+        __ShadeTexture=_ShadeTexture;
+        __EmissionColor=_EmissionColor;
+        __EmissionMap=_EmissionMap;
+    } else{
+        __Color=_Color_Mirror;
+        __ShadeColor=_ShadeColor_Mirror;
+        __MainTex=_MainTex_Mirror;
+        __ShadeTexture=_ShadeTexture_Mirror;
+        __EmissionColor=_EmissionColor_Mirror;
+        __EmissionMap=_EmissionMap_Mirror;
+    }
 #ifdef MTOON_CLIP_IF_OUTLINE_IS_NONE
     #ifdef MTOON_OUTLINE_WIDTH_WORLD
     #elif MTOON_OUTLINE_WIDTH_SCREEN
@@ -123,7 +150,7 @@ float4 frag_forward(v2f i) : SV_TARGET
     const float EPS_COL = 0.00001;
     
     // uv
-    float2 mainUv = TRANSFORM_TEX(i.uv0, _MainTex);
+    float2 mainUv = TRANSFORM_TEX(i.uv0, __MainTex);
     
     // uv anim
     float uvAnim = tex2D(_UvAnimMaskTexture, mainUv).r * _Time.y;
@@ -133,20 +160,20 @@ float4 frag_forward(v2f i) : SV_TARGET
     float rotateRad = _UvAnimRotation * PI_2 * uvAnim;
     const float2 rotatePivot = float2(0.5, 0.5);
     mainUv = mul(float2x2(cos(rotateRad), -sin(rotateRad), sin(rotateRad), cos(rotateRad)), mainUv - rotatePivot) + rotatePivot;
-    
+
     // main tex
-    half4 mainTex = tex2D(_MainTex, mainUv);
+    half4 mainTex = tex2D(__MainTex, mainUv);
     
     // alpha
     half alpha = 1;
 #ifdef _ALPHATEST_ON
-    alpha = _Color.a * mainTex.a;
+    alpha = __Color.a * mainTex.a;
     alpha = (alpha - _Cutoff) / max(fwidth(alpha), EPS_COL) + 0.5; // Alpha to Coverage
     clip(alpha - _Cutoff);
     alpha = 1.0; // Discarded, otherwise it should be assumed to have full opacity
 #endif
 #ifdef _ALPHABLEND_ON
-    alpha = _Color.a * mainTex.a;
+    alpha = __Color.a * mainTex.a;
 #if !_ALPHATEST_ON && SHADER_API_D3D11 // Only enable this on D3D11, where I tested it
     clip(alpha - 0.0001);              // Slightly improves rendering with layered transparency
 #endif
@@ -191,8 +218,8 @@ float4 frag_forward(v2f i) : SV_TARGET
     lightIntensity = saturate((lightIntensity - minIntensityThreshold) / max(EPS_COL, (maxIntensityThreshold - minIntensityThreshold)));
     
     // Albedo color
-    half4 shade = _ShadeColor * tex2D(_ShadeTexture, mainUv);
-    half4 lit = _Color * mainTex;
+    half4 shade = __ShadeColor * tex2D(__ShadeTexture, mainUv);
+    half4 lit = __Color * mainTex;
     half3 col = lerp(shade.rgb, lit.rgb, lightIntensity);
 
     // Direct Light
@@ -247,7 +274,7 @@ float4 frag_forward(v2f i) : SV_TARGET
     // Emission
 #ifdef MTOON_FORWARD_ADD
 #else
-    half3 emission = tex2D(_EmissionMap, mainUv).rgb * _EmissionColor.rgb;
+    half3 emission = tex2D(__EmissionMap, mainUv).rgb * __EmissionColor.rgb;
     col += lerp(emission, half3(0, 0, 0), i.isOutline);
 #endif
 
