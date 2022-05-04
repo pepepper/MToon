@@ -366,7 +366,7 @@ float4 frag_forward(v2f i) : SV_TARGET
         
         // Albedo color
         half4 shade = _ShadeColor_Mirror * tex2D(_ShadeTexture_Mirror, mainUv);
-        half4 lit = _Color.Mirror * mainTex;
+        half4 lit = _Color_Mirror * mainTex;
         half3 col = lerp(shade.rgb, lit.rgb, lightIntensity);
 
         // Direct Light
